@@ -20,20 +20,24 @@ FIND - выводит найденные установленные переме
 END - закрывает приложение.
 
 Пример
-> GET A
-NULL
+> GET A -> NULL
+
 > SET A 10
-> GET A
-10
-> COUNTS 10
-1
+
+> GET A -> 10
+
+> COUNTS 10 -> 1
+
 > SET B 20
+
 > SET C 10
-> COUNTS 10
-2
+
+> COUNTS 10 -> 2
+
 > UNSET B
-> GET B
-NULL
+
+> GET B -> NULL
+
 > END
 
 
@@ -46,16 +50,23 @@ COMMIT - фиксация изменений текущей (самой внут
 
 Пример
 > BEGIN
+
 > SET A 10
+
 > BEGIN
+
 > SET A 20
+
 > BEGIN
+
 > SET A 30
-> GET A
-30
+
+> GET A -> 30
+
 > ROLLBACK
-> GET A
-20
+
+> GET A -> 20
+
 > COMMIT
-> GET A
-20
+
+> GET A -> 20
