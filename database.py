@@ -2,34 +2,49 @@ class Database:
     def __init__(self):
         self.data = {}
         self.transactions = []
+        
+    def _current_trans(self):
+        return self.transactions[-1] if self.transactions else self.data
 
     def set(self, key, value):
-        self.data[key] = value
+        self._current_trans()[key] = value
 
     def get(self, key):
-        return self.data.get(key, "NULL")
+        return self._current_trans().get(key, "NULL")
 
     def unset(self, key):
-        if key in self.data:
-            del self.data[key]
+        if key in self._current_trans():
+            self._current_trans().pop(key, None)
+            return
+        raise KeyError
 
     def count(self, value):
-        return list(self.data.values()).count(value)
+        return list(self._current_trans().values()).count(value)
 
     def find(self, value):
-        found_keys = [key for key, val in self.data.items() if val == value]
+        found_keys = [key for key, val in self._current_trans().items() if val == value]
         return found_keys
 
     def begin(self):
-        self.transactions.append(self.data.copy())
+        parent = self._current_trans().copy()
+        self.transactions.append(parent)
 
     def rollback(self):
-        if self.transactions:
-            self.data = self.transactions.pop()
+        if not self.transactions:
+            print("No transactions")
+        else:
+            self.transactions.pop()
 
     def commit(self):
+        if not self.transactions:
+            print("No transactions")
+            return
+
+        top = self.transactions.pop()
         if self.transactions:
-            self.transactions = []
+            self.transactions[-1].update(top)
+        else:
+            self.data = top
 
 def main():
     db = Database()
